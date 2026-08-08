@@ -1,12 +1,21 @@
-
+/**
+ * @file ili9341.h
+ * @brief module ILI9341 API.
+ * 
+ * @author Phuc VU
+ * @date 2026-08-08
+ */
 
 #ifndef _ILI9341_H    /* Guard against multiple inclusion */
 #define _ILI9341_H
 
+
+/********************************* Includes ***************************************/
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "typedefs.h"
+
 
 
 /* Provide C++ Compatibility */
@@ -14,7 +23,8 @@
 extern "C" {
 #endif
 
-/*** Constants ****************************************************************/
+/********************************* Constants definition ***************************/
+
 #define ILI9341_TFTWIDTH  240
 #define ILI9341_TFTHEIGHT 320
 
@@ -70,12 +80,11 @@ extern "C" {
 
 #define ILI9341_GMCTRP1 0xE0
 #define ILI9341_GMCTRN1 0xE1
-/*
-#define ILI9341_PWCTR6  0xFC
 
-*/
+//#define ILI9341_PWCTR6  0xFC
 
-/*** Color definitions ********************************************************/
+
+/* COLOR DEFINITIONS */
 #define ILI9341_BLACK       0x0000      /*   0,   0,   0 */
 #define ILI9341_NAVY        0x000F      /*   0,   0, 128 */
 #define ILI9341_DARKGREEN   0x03E0      /*   0, 128,   0 */
@@ -96,15 +105,11 @@ extern "C" {
 #define ILI9341_GREENYELLOW 0xAFE5      /* 173, 255,  47 */
 #define ILI9341_PINK        0xF81F
 
-    
-    
+/********************************* Macros definition ******************************/
 
-    
-#define ILI9341_GetWidth()  ILI9341_TFTWIDTH
-#define ILI9341_GetHeight() ILI9341_TFTHEIGHT
-    
-    
-typedef BOOL (*SPI_Write)(const void * const data, size_t size);
+/********************************* Types definition *******************************/
+
+typedef bool (*SPI_Write)(const void * const data, size_t size);
 typedef void (*SPI_SetOutput)(uint8_t state);
 typedef void (*SPI_Delay)(uint32_t millis);
 
@@ -116,10 +121,11 @@ typedef struct
     SPI_SetOutput Reset;
     SPI_SetOutput Led;
     SPI_Delay Delay;
-}SPI_Interface_t;
+}InterfaceSPI_t;
+
+/********************************* API functions **********************************/
     
-    
-void ILI9341_Initialize(SPI_Interface_t* p);
+void ILI9341_Initialize(InterfaceSPI_t *interface);
     
 /* Entry point for GFX */
 void ILI9341_DrawPixel(int16_t x, int16_t y, uint16_t color);
@@ -158,10 +164,7 @@ void ILI9341_SetTextSize(uint8_t size);
 void ILI9341_DrawChar(int16_t x, int16_t y, uint8_t car, uint16_t color, uint16_t bgColor, uint8_t size);
 
 /* Display text */
-void ILI9341_Print(const uint8_t* outputText);
-void ILI9341_Println(const uint8_t* outputText);
-void ILI9341_PrintFloat(float value);
-void ILI9341_PrintHex(uint32_t value);
+void ILI9341_OutputText(uint8_t const * text);
 
 
     /* Provide C++ Compatibility */
@@ -170,7 +173,3 @@ void ILI9341_PrintHex(uint32_t value);
 #endif
 
 #endif /* _ILI9341_H */
-
-/* *****************************************************************************
- End of File
- */

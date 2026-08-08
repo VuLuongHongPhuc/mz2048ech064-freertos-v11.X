@@ -1,3 +1,14 @@
+/**
+ * @file spi.c
+ * @brief Interface SPI driver.
+ * 
+ * @author Phuc VU
+ * @date 2026-08-07
+ * @note This file is part of the project "mz2048ech064_rtos_cmake"
+ */
+
+/********************************* Includes ***************************************/
+
 /* HARDWARE description
  * Transfer in Polling
  * 
@@ -5,76 +16,53 @@
  * Separate SPI FIFO buffers for receive and transmit
  *  - FIFO buffers act as 4/8/16-level deep FIFOs based on 32/16/8-bit data width
  * 
- * 
- * 
  * SPI software configuration for TFT 2.2" ILI9341:
  * 3.3
  * GND
- * RD9----CS
- * RD10---RESET
- * RD11---DC
- * RD0----SDI/MOSI
- * RD1----SCK
- * RD2----LED
- * RD3----SDO/MISO
+ * RD9----> CS
+ * RD10---> RESET
+ * RD11---> DC
+ * RD0----> SDI/MOSI
+ * RD1----> SCK
+ * RD2----> LED
+ * RD3----> SDO/MISO
  *   
  * SPI hardware configuration for TFT 2.2" ILI9341:
- * RD9 --- CS
- * RD10 -- RESET
- * RD11 -- DC
- * RD0 --- LED
- * RD1 --- SCK1      pin.49
- * RD2 ---           MISO/SDI1
- * RD3 ---           MOSI/SDO1
+ * RD9----> CS
+ * RD10---> RESET
+ * RD11---> DC
+ * RD0----> LED
+ * RD1----> SCK1-------pin.49
+ * RD2----> MISO/SDI1
+ * RD3----> MOSI/SDO1
 */
 
-#include "xc.h"
 #include <sys/attribs.h>  // IPLxAUTO, IPLxSRS
-
 
 #include "spi.h"
 
+/********************************* Constants definition ***************************/
 
-
-/*** Define *******************************************************************/
 #define DEF_DUMMY_DATA  0xffffffff
 
 
-/*** Variables ****************************************************************/
+/********************************* Macros definition ******************************/
+
+/********************************* Types definition *******************************/
+
+/********************************* Local variable *********************************/
+
+/********************************* Local functions prototype **********************/
+
+static void InitializeGPIO(void);
+
+/********************************* API functions **********************************/
 
 
-
-/*** Private Prototypes *******************************************************/
-
-
-
-
-/*** Functions ****************************************************************/
-
-static void Initialize_GPIO()
-{
-    /* Unlock system for PPS configuration */
-    SYSKEY = 0x00000000U;
-    SYSKEY = 0xAA996655U;
-    SYSKEY = 0x556699AAU;
-
-    CFGCONbits.IOLOCK = 0U;
-
-    /* PPS Input Remapping */
-    //SDI1R = 0;  /*!< RD2 SPI Data In MISO */
-
-    /* PPS Output Remapping */
-    RPD3R = 5;   /*!< RD3 SPI Data Out MOSI*/
-
-    /* Lock back the system after PPS configuration */
-    CFGCONbits.IOLOCK = 1U;
-
-    SYSKEY = 0x00000000U;
-}
 
 void SPI1_Initialize()
 {
-    Initialize_GPIO();
+    InitializeGPIO();
     
    
     /*
@@ -159,6 +147,21 @@ void SPI1_Initialize()
     SPI1CONbits.ON = 1;    
 }
 
+static void InitializeGPIO()
+{
+    /* Unlock system for PPS configuration */
+    CFGCONbits.IOLOCK = 0U;
+
+    /* PPS Input Remapping */
+    //SDI1R = 0;  /*!< RD2 SPI Data In MISO */
+
+    /* PPS Output Remapping */
+    RPD3R = 5;   /*!< RD3 SPI Data Out MOSI*/
+
+    /* Lock back the system after PPS configuration */
+    //CFGCONbits.IOLOCK = 1U;
+}
+
 /*
 bool SPI1_TransferSetup (SPI_TRANSFER_SETUP* setup, uint32_t spiSourceClock )
 {
@@ -207,14 +210,14 @@ bool SPI1_TransferSetup (SPI_TRANSFER_SETUP* setup, uint32_t spiSourceClock )
  * @brief Write buffer
  * @param pBuffer - data to transmit
  * @param size - number of byte in buffer
- * @return TRUE/FALSE
+ * @return true/false
  */
-BOOL SPI1_Write(const void* const pBuffer, size_t size)
+bool SPI1_Write(void const * const pBuffer, size_t size)
 {
     size_t count = 0;
     
-    if (pBuffer == NULL) { return FALSE; }
-    if (size == 0) { return FALSE; }
+    if (pBuffer == NULL) { return false; }
+    if (size == 0) { return false; }
     
     /* Clear the receive overflow error if any */
     SPI1STATCLR = _SPI1STAT_SPIROV_MASK;
@@ -277,16 +280,16 @@ BOOL SPI1_Write(const void* const pBuffer, size_t size)
         /* Data pending in shift register */
     }
     
-    return TRUE;
+    return true;
 }
 
 
-BOOL SPI1_Read(void* const pBuffer, size_t size)
+bool SPI1_Read(void* const pBuffer, size_t size)
 {
     size_t count = 0;
     
-    if (pBuffer == NULL) { return FALSE; }
-    if (size == 0) { return FALSE; }
+    if (pBuffer == NULL) { return false; }
+    if (size == 0) { return false; }
     
     /* Clear the receive overflow error if any */
     SPI1STATCLR = _SPI1STAT_SPIROV_MASK;
@@ -359,7 +362,7 @@ BOOL SPI1_Read(void* const pBuffer, size_t size)
         /* Data pending in shift register */
     }
     
-    return TRUE;
+    return true;
 }
 
 /*EOF*/

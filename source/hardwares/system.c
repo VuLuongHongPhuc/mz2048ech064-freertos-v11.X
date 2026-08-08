@@ -7,10 +7,11 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-#include "system.h"
 #include "xc.h"
 //#include <p32xxxx.h>
 #include "can1.h"
+#include "uart1.h"
+#include "spi.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -25,7 +26,9 @@
 /* ************************************************************************** */
 /* ************************************************************************** */
 
-void SYS_Clock(void);
+static void PeripheralClock(void);
+static void SystemUnlockSequenceKey(void);
+
 
 
 /* ************************************************************************** */
@@ -34,10 +37,24 @@ void SYS_Clock(void);
 /* ************************************************************************** */
 /* ************************************************************************** */
 
+static inline void SystemLockSequenceKey(void)
+{
+    /* Lock sequence KEY */
+    SYSKEY = 0x33333333;
+}
+
+static void SystemUnlockSequenceKey(void)
+{
+    /* Unlock sequence KEY */
+    SYSKEY = 0x00000000;
+	SYSKEY = 0xAA996655;
+	SYSKEY = 0x556699AA;
+}
+
 static inline void SYS_INT_Enable(void)
 {
-    //__builtin_mtc0(12, 0,(__builtin_mfc0(12, 0) | 0x0001));
     // doit avoir IE=1 EXL=0 ERL=0 DM=0 pour que l'interrupt soit actif
+    //__builtin_mtc0(12, 0,(__builtin_mfc0(12, 0) | 0x0001));    
     __builtin_mtc0(_CP0_STATUS, _CP0_STATUS_SELECT,(__builtin_mfc0(_CP0_STATUS, _CP0_STATUS_SELECT) | 0x0001));
 }
 
@@ -47,52 +64,20 @@ static inline void SYS_INT_Disable(void)
 }
 
 
-static void SYS_DEVCON_SystemUnlock ( )
-{
-    uint32_t int_flag = 0;
-
-    int_flag = (uint32_t)__builtin_disable_interrupts();
-
-    /* System unlock */
-    SYSKEY = 0x00000000;
-	SYSKEY = 0xAA996655;
-	SYSKEY = 0x556699AA;
-
-    if (int_flag)
-    {
-        SYS_INT_Enable();
-    }
-}
-
-static void SYS_DEVCON_SystemLock (void)
-{
-    uint32_t int_flag = 0;
-   
-    int_flag = (uint32_t)__builtin_disable_interrupts();
-
-    /* System lock */
-    SYSKEY = 0x33333333;
-
-    if (int_flag)
-    {
-        /* Enable interrupt */
-        __builtin_mtc0(12, 0,(__builtin_mfc0(12, 0) | 0x0001));
-    }
-}
-
 void SYS_Initialize(void)
 {
-    /* Interrupts must be disabled when enabling the Prefetch Cache Module */
-    SYS_INT_Disable();
+    /* NOTE: Interrupts must be disabled when enabling the Prefetch Cache Module */
     
+    uint32_t int_flag = 0;
+    int_flag = (uint32_t)__builtin_disable_interrupts();
     
-    SYS_Clock();
+    PeripheralClock();
     
     /* Configure Prefetch, Wait States and ECC */
     PRECONbits.PREFEN = 0b11;
-    PRECONbits.PFMWS = 0b001;
-    //CFGCONbits.ECCCON = 0b11; // (default)
-    //CFGCONbits.JTAGEN = 0;  // disable JTAG (default)
+    PRECONbits.PFMWS  = 0b001;
+    CFGCONbits.ECCCON = 0b11; // (default)
+    CFGCONbits.JTAGEN = 0;    // disable JTAG (default)
     
     // Data Memory SRAM wait states: Default Setting = 1; set it to 0
     //BMXCONbits.BMXWSDRM = 0;
@@ -101,27 +86,32 @@ void SYS_Initialize(void)
     
     // 0: Interrupt controller configured for Single-vectored mode
     // 1: Interrupt controller configured for Multi-vectored mode
-    INTCONbits.MVEC = 1;
+    INTCONSET = _INTCON_MVEC_MASK; // INTCONbits.MVEC = 1;
     
     // Interrupt Proximity Timer Control bits
     //INTCONbits.TPC = 0; //default disable
     
     
     /* Init module */
-    
-    
+    UART1_Initialize();
+    //SPI1_Initialize();
+
     
     /* Init PPS */
     
     
     
-    SYS_INT_Enable();
+    if (int_flag)
+    {
+        __builtin_enable_interrupts();
+    }
 }
 
 
-void SYS_Clock(void)
-{
-    SYS_DEVCON_SystemUnlock ( );
+static void PeripheralClock(void)
+{   
+    SystemUnlockSequenceKey();
+    
     
     //OSCCONbits.FRCDIV = 0; // OSC_FRC_DIV_1 (default)
     //OSCCONbits.SOSCRDY    secondary oscillator ready indicator
@@ -190,7 +180,8 @@ void SYS_Clock(void)
     REFO4CONbits.ON = 0; /* Disable REFCLKO4*/
     REFO4CONbits.OE = 0; /* Disable REFCLK4_OE*/
     
-    SYS_DEVCON_SystemLock ( );
+    
+    SystemLockSequenceKey();
 }
 
 

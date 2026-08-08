@@ -2,6 +2,7 @@
 
 #include "ili9341.h"
 #include "ili9341_test.h"
+#include "convert_to_string.h"
 
 #define M_SWAP_int16_t(a, b)     { int16_t t = a; a = b; b = t; }
 
@@ -15,7 +16,8 @@ void ILI9341_TEST_Sequence(void)
     switch(index)
     {
         case 0: ILI9341_TEST_Text(); break;
-        case 1: ILI9341_TEST_Screen(); break;
+        case 1: 
+        case 2: ILI9341_TEST_Screen(); break;
         case 3: ILI9341_TEST_FastLines(ILI9341_RED, ILI9341_BLUE); break;
         case 4: ILI9341_TEST_Lines(ILI9341_CYAN); break;
         case 5: ILI9341_TEST_Rects(ILI9341_GREEN); break;
@@ -41,34 +43,40 @@ void ILI9341_TEST_Text(void)
     ILI9341_SetCursor(0, 0);
     ILI9341_SetTextColor(ILI9341_WHITE);
     ILI9341_SetTextSize(1);
-    ILI9341_Println((const uint8_t*)"Hello World!");
+    ILI9341_OutputText((uint8_t const*)"Hello World!\n");
 
     /* print float */
     ILI9341_SetTextColor(ILI9341_YELLOW);
     ILI9341_SetTextSize(2);
-    ILI9341_PrintFloat(1234.56);
-    ILI9341_Println((const uint8_t*)"");
+    int32_t valueFloat = (int32_t)(1234.56f * 1000);
+    char str[16];
+    fixed3_to_str(valueFloat, str);
+    ILI9341_OutputText(str);
+    ILI9341_OutputText((uint8_t const*)"\n");
 
     /* print hex */
     ILI9341_SetTextColor(ILI9341_RED);
     ILI9341_SetTextSize(3);
-    ILI9341_PrintHex(0xDEADBEEF);
-    ILI9341_Println((const uint8_t*)"");
+    uint32_t valueHex = 0xDEADBEEF;
+    char hex[9];
+    uint32_to_hex(valueHex, hex);
+    ILI9341_OutputText(hex);
+    ILI9341_OutputText((uint8_t const*)"\n");
 
     /* print text in != size */
     ILI9341_SetTextColor(ILI9341_GREEN);
     ILI9341_SetTextSize(5);
-    ILI9341_Println((const uint8_t*)"Groop");
+    ILI9341_OutputText((uint8_t const*)"Groop\n");
     ILI9341_SetTextSize(2);
-    ILI9341_Println((const uint8_t*)"I implore thee,");
+    ILI9341_OutputText((uint8_t const*)"I implore thee,\n");
     ILI9341_SetTextSize(1);
-    ILI9341_Println((const uint8_t*)"my foonting turlingdromes.");
-    ILI9341_Println((const uint8_t*)"And hooptiously drangle me");
-    ILI9341_Println((const uint8_t*)"with crinkly bindlewurdles,");
-    ILI9341_Println((const uint8_t*)"Or I will rend thee");
-    ILI9341_Println((const uint8_t*)"in the gobberwarts");
-    ILI9341_Println((const uint8_t*)"with my blurglecruncheon,");
-    ILI9341_Println((const uint8_t*)"see if I don't!");
+    ILI9341_OutputText((uint8_t const*)"my foonting turlingdromes.\n");
+    ILI9341_OutputText((uint8_t const*)"And hooptiously drangle me\n");
+    ILI9341_OutputText((uint8_t const*)"with crinkly bindlewurdles,\n");
+    ILI9341_OutputText((uint8_t const*)"Or I will rend thee\n");
+    ILI9341_OutputText((uint8_t const*)"in the gobberwarts\n");
+    ILI9341_OutputText((uint8_t const*)"with my blurglecruncheon,\n");
+    ILI9341_OutputText((uint8_t const*)"see if I don't!\n");
 
 }
 
@@ -123,7 +131,7 @@ void testFastVLine(void)
 */
 void ILI9341_TEST_FastLines(uint16_t color1, uint16_t color2)
 {
-    int x, y, w = ILI9341_GetWidth(), h = ILI9341_GetHeight();
+    int x, y, w = ILI9341_TFTWIDTH, h = ILI9341_TFTHEIGHT;
 
   ILI9341_FillScreen(ILI9341_BLACK);
   
@@ -136,8 +144,8 @@ void ILI9341_TEST_Lines(uint16_t color)
     int16_t x1, y1, x2, y2;
     uint16_t w,h;
 
-    w = ILI9341_GetWidth(),
-    h = ILI9341_GetHeight();
+    w = ILI9341_TFTWIDTH,
+    h = ILI9341_TFTHEIGHT;
 
     ILI9341_FillScreen(ILI9341_BLACK);
 
@@ -189,11 +197,11 @@ void ILI9341_TEST_Lines(uint16_t color)
 void ILI9341_TEST_Rects(uint16_t color)
 {
     int min_side, i, i2;
-    uint16_t cx = ILI9341_GetWidth()  / 2;
-    uint16_t cy = ILI9341_GetHeight() / 2;
+    uint16_t cx = ILI9341_TFTWIDTH  / 2;
+    uint16_t cy = ILI9341_TFTHEIGHT / 2;
 
     ILI9341_FillScreen(ILI9341_BLACK);
-    min_side = MIN(ILI9341_GetWidth(), ILI9341_GetHeight());
+    min_side = MIN(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT);
 
     for(i=2; i<min_side; i+=6)
     {
@@ -206,12 +214,12 @@ void ILI9341_TEST_Rects(uint16_t color)
 void ILI9341_TEST_FilledRects(uint16_t color1, uint16_t color2)
 {
     int min_side, i, i2;
-    int cx = ILI9341_GetWidth()  / 2;
-    int cy = ILI9341_GetHeight() / 2;
+    int cx = ILI9341_TFTWIDTH  / 2;
+    int cy = ILI9341_TFTHEIGHT / 2;
 
     ILI9341_FillScreen(ILI9341_BLACK);
     
-    min_side = MIN(ILI9341_GetWidth(), ILI9341_GetHeight()) - 1;
+    min_side = MIN(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT) - 1;
     
     for(i=min_side; i>0; i-=6)
     {
@@ -229,8 +237,8 @@ void ILI9341_TEST_Circles(uint8_t radius, uint16_t color)
   //ILI9341_FillScreen(ILI9341_BLACK);
   
   int x, y, r2 = radius * 2;
-  int w = ILI9341_GetWidth()  + radius;
-  int h = ILI9341_GetHeight() + radius;
+  int w = ILI9341_TFTWIDTH  + radius;
+  int h = ILI9341_TFTHEIGHT + radius;
 
   // Screen is not cleared for this one -- this is
   // intentional and does not affect the reported time.
@@ -247,7 +255,7 @@ void ILI9341_TEST_Circles(uint8_t radius, uint16_t color)
 void ILI9341_TEST_FilledCircles(uint8_t radius, uint16_t color)
 {
   
-  int x, y, w = ILI9341_GetWidth(), h = ILI9341_GetHeight(), r2 = radius * 2;
+  int x, y, w = ILI9341_TFTWIDTH, h = ILI9341_TFTHEIGHT, r2 = radius * 2;
 
   ILI9341_FillScreen(ILI9341_BLACK);
   
@@ -261,8 +269,8 @@ void ILI9341_TEST_FilledCircles(uint8_t radius, uint16_t color)
 void ILI9341_TEST_Triangles(void)
 {
   int min_side, i;
-  int cx = ILI9341_GetWidth()  / 2 - 1;
-  int cy = ILI9341_GetHeight() / 2 - 1;
+  int cx = ILI9341_TFTWIDTH  / 2 - 1;
+  int cy = ILI9341_TFTHEIGHT / 2 - 1;
 
   ILI9341_FillScreen(ILI9341_BLACK);
   min_side = MIN(cx, cy);
@@ -373,8 +381,8 @@ void fillTriangle (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, i
 void ILI9341_TEST_FilledTriangles(void)
 {
     int   i;
-    int cx = ILI9341_GetWidth()  / 2 - 1;
-    int cy = ILI9341_GetHeight() / 2 - 1;
+    int cx = ILI9341_TFTWIDTH  / 2 - 1;
+    int cy = ILI9341_TFTHEIGHT / 2 - 1;
 
     ILI9341_FillScreen(ILI9341_BLACK);
 
@@ -388,12 +396,12 @@ void ILI9341_TEST_FilledTriangles(void)
 void ILI9341_TEST_RoundRects(void)
 {
     int   w, i, i2;
-    int cx = ILI9341_GetWidth()  / 2 - 1;
-    int cy = ILI9341_GetHeight() / 2 - 1;
+    int cx = ILI9341_TFTWIDTH  / 2 - 1;
+    int cy = ILI9341_TFTHEIGHT / 2 - 1;
 
     
     ILI9341_FillScreen(ILI9341_BLACK);
-    w   = MIN(ILI9341_GetWidth(), ILI9341_GetHeight());
+    w   = MIN(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT);
 
     for(i=0; i<w; i+=6) 
     {
@@ -406,13 +414,13 @@ void ILI9341_TEST_RoundRects(void)
 void ILI9341_TEST_FilledRoundRects(void)
 {
     int     i, i2;
-    int cx = ILI9341_GetWidth()  / 2 - 1;
-    int cy = ILI9341_GetHeight() / 2 - 1;
+    int cx = ILI9341_TFTWIDTH  / 2 - 1;
+    int cy = ILI9341_TFTHEIGHT / 2 - 1;
 
     
     ILI9341_FillScreen(ILI9341_BLACK);
 
-    for(i=MIN(ILI9341_GetWidth(), ILI9341_GetHeight()); i>20; i-=6)
+    for(i=MIN(ILI9341_TFTWIDTH, ILI9341_TFTHEIGHT); i>20; i-=6)
     {
         i2 = i / 2;
         ILI9341_FillRoundRect(cx-i2, cy-i2, i, i, i/8, ILI9341_Color565(0, i, 0));

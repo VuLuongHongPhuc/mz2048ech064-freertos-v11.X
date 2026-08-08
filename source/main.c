@@ -201,7 +201,7 @@ int main(void)
   
     
 
-#if 0
+#if 1
     (void) xTaskCreate((TaskFunction_t) DISPLAY_Task,
                 "Display",
                 256,

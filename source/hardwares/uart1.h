@@ -19,17 +19,9 @@
 #define _UART1_H
 
 
-/* ************************************************************************** */
-/* ************************************************************************** */
-/* Section: Included Files                                                    */
-/* ************************************************************************** */
-/* ************************************************************************** */
-
-/* This section lists the other files that are included in this file.
- */
-
-/* TODO:  Include other files here if needed. */
-
+/********************************* Includes ***********************************/
+#include <stdint.h>
+#include <stdbool.h>
 
 /* Provide C++ Compatibility */
 #ifdef __cplusplus
@@ -38,7 +30,8 @@ extern "C" {
 
     
     
-void UART1_Initialize(void);
+extern void UART1_Initialize(void);
+extern bool UART1_Write(uint8_t const * const pBuf, uint16_t length);
 
 
     /* Provide C++ Compatibility */

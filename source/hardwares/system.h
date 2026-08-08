@@ -38,7 +38,7 @@ extern "C" {
     // SYSTEM CLOCK       : 100 MHz
     // OSCILLATOR EXTERN  : EC 24 MHz
     
-    void SYS_Initialize(void);
+    extern void SYS_Initialize(void);
 
 
     /* Provide C++ Compatibility */

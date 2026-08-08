@@ -20,12 +20,13 @@ static void TestCan(void);
 static void TestRng(void);
 static void TestUart(void);
 static void TestDmaUart(void);
+static void TestUart1Tx(void);
 
 
 
 static void Initialize(void)
 {
-    CAN1_Initialize();
+    //CAN1_Initialize();
     //TRNG_Initialize();
     //UART1_Initialize();
 }
@@ -54,12 +55,19 @@ void TEST_Task( void *pvParameters )
         /* Delay to let the system run tasks */
         vTaskDelay(1000U / portTICK_PERIOD_MS);
 
-        TestCan();
+        //TestCan();
         //TestRng();
         //TestUart();
-        //TestDmaUart();
+        TestDmaUart();
+        //TestUart1Tx();
         LED_1_Toggle();
     }
+}
+
+static void TestUart1Tx(void)
+{
+    uint8_t buf[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+    UART1_Write(buf, sizeof(buf));
 }
 
 void TestDmaUart(void)
@@ -85,7 +93,7 @@ void TestRng(void)
 
 static void TestCan(void)
 {
-#if 1
+
     static uint8_t b = 0;
     uint32_t id = 0x1A001023;
     uint8_t length = 3;
@@ -94,7 +102,7 @@ static void TestCan(void)
     //uint16_t *timestamp;
     
     (void)CAN1_Write(id, length, data, msgAttr);
-#endif
+
 }
 
 static void TestUart(void)

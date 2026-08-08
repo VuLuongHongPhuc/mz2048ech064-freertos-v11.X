@@ -1,26 +1,21 @@
-/* ************************************************************************** */
-/** Descriptive File Name
-
-  @Company
-    Company Name
-
-  @File Name
-    filename.h
-
-  @Summary
-    Brief description of the file.
-
-  @Description
-    Describe the purpose of this file.
+/**
+ * @file spi.h
+ * @brief SPI interface implementation.
+ * 
+ * @author Phuc VU
+ * @date 2026-08-07
+ * @note This file is part of the project "mz2048ech064_rtos_cmake"
  */
-/* ************************************************************************** */
 
 #ifndef _DRV_SPI1_H    /* Guard against multiple inclusion */
 #define _DRV_SPI1_H
 
+/********************************* Includes ***************************************/
 
-#include "typedefs.h" // BOOL
-
+#include <stddef.h>  // size_t
+#include <stdint.h>  // uint32_t, uint16_t, uint8_t
+#include <stdbool.h> // bool, true, false
+#include "xc.h"
 
 /* Provide C++ Compatibility */
 #ifdef __cplusplus
@@ -29,12 +24,12 @@ extern "C" {
 
     void SPI1_Initialize();
     
-    BOOL SPI1_Write(const void* const pBuffer, size_t size);
-    BOOL SPI1_Read(void* const pBuffer, size_t size);
+    bool SPI1_Write(void const * const pBuffer, size_t size);
+    bool SPI1_Read(void* const pBuffer, size_t size);
     
-    static inline BOOL SPI1_IsBusy(void)
+    static inline bool SPI1_IsBusy(void)
     {
-        return ((SPI1STAT & _SPI1STAT_SRMT_MASK) == 0U) ? TRUE : FALSE;
+        return ((SPI1STAT & _SPI1STAT_SRMT_MASK) == 0U) ? true : false;
     }
 
     /* Provide C++ Compatibility */
