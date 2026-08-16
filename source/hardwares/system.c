@@ -9,9 +9,11 @@
 
 #include "xc.h"
 //#include <p32xxxx.h>
+#include "gpio.h"
 #include "can1.h"
 #include "uart1.h"
 #include "spi.h"
+#include "core_timer.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -68,8 +70,7 @@ void SYS_Initialize(void)
 {
     /* NOTE: Interrupts must be disabled when enabling the Prefetch Cache Module */
     
-    uint32_t int_flag = 0;
-    int_flag = (uint32_t)__builtin_disable_interrupts();
+    (void)__builtin_disable_interrupts();
     
     PeripheralClock();
     
@@ -80,7 +81,7 @@ void SYS_Initialize(void)
     CFGCONbits.JTAGEN = 0;    // disable JTAG (default)
     
     // Data Memory SRAM wait states: Default Setting = 1; set it to 0
-    //BMXCONbits.BMXWSDRM = 0;
+    //BMXCONbits.BMXWSDRM = 1;
     
 // *** interrupt **********************
     
@@ -92,19 +93,15 @@ void SYS_Initialize(void)
     //INTCONbits.TPC = 0; //default disable
     
     
-    /* Init module */
+    GPIO_init();
+    
+    /* Initialize peripheral */
+    CORETIMER_Initialize(1000);
     UART1_Initialize();
     //SPI1_Initialize();
 
     
-    /* Init PPS */
-    
-    
-    
-    if (int_flag)
-    {
-        __builtin_enable_interrupts();
-    }
+    (void)__builtin_enable_interrupts();
 }
 
 

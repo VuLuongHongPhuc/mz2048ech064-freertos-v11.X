@@ -1,9 +1,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
 #include "gpio.h"
-#include "led.h"
 #include "uart1.h"
 #include "can1.h"
 #include "trng.h"
@@ -39,16 +37,7 @@ void TEST_Task( void *pvParameters )
 {
     configASSERT( ( uint32_t ) pvParameters == 1UL );
     
-    
     Initialize();
-    
-    
-    LED_1_Clear();
-    LED_2_Clear();
-    //LED_3_Clear(); // use by main task
-    
-    
-    //TestDmaUart();
     
     while (1)
     {
@@ -60,7 +49,8 @@ void TEST_Task( void *pvParameters )
         //TestUart();
         TestDmaUart();
         //TestUart1Tx();
-        LED_1_Toggle();
+        
+        //LED_RF3_Toggle(); /* main task */
     }
 }
 
@@ -128,7 +118,7 @@ static void UART1_RX_Callback(void)
 
 void UART1_TX_Callback(void)
 {
-    LED_2_Toggle();
+    //LED_RF4_Toggle();
 }
 /* *****************************************************************************
  End of File

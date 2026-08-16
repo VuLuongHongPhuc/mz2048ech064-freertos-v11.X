@@ -1,18 +1,27 @@
 
 
-
+#include <stddef.h>             // Defines NULL
 #include <xc.h>
 #include <sys/attribs.h>  // ipl2
 //#include "cp0defs.h" declarer dans xc.h
 //#include "pic32m_builtins.h"  //__builtin_enable_interrupts
 
-#include <stddef.h>             // Defines NULL
 
 #include "core_timer.h"
-//#include "bsp_gpio.h"
 
 
+typedef void (*CORETIMER_CallbackFunct)(uintptr_t context);
 
+typedef struct
+{
+    CORETIMER_CallbackFunct callbackFunc;
+    uintptr_t context;
+}CoreTimerObj_t;
+
+static volatile CoreTimerObj_t coretimer_obj = {
+    .callbackFunc = NULL,
+    .context = 0
+};
 
 static uint32_t coretimer_compare_value = 0;
 static uint32_t coretimer_periode = 0;
@@ -23,56 +32,31 @@ static uint32_t coretimer_periode = 0;
 /* @brief Initialisze the core timer for interrupt
  * @param[in] period
  * 
- * MS_TO_CT_TICKS -> milliseconds
- * US_TO_CT_TICKS -> µs
+ * @note MS_TO_CT_TICKS -> milliseconds
+ * @note US_TO_CT_TICKS -> µs
  */
 void CORETIMER_Initialize(uint32_t period)
 {   
-    uint32_t int_flag;
+    /* stop timer in debug mode */
+    _CP0_SET_DEBUG(_CP0_GET_DEBUG() & ~_CP0_DEBUG_COUNTDM_MASK);
     
-    /* Disable interrupts globally */
-    int_flag = __builtin_disable_interrupts();
-            
-    // Set the core timer period
-    coretimer_compare_value = coretimer_periode = MS_TO_CT_TICKS * period;
+    /* Set the core timer period */
+    coretimer_periode = MS_TO_CT_TICKS * period;
+    coretimer_compare_value = coretimer_periode;
     _CP0_SET_COMPARE(coretimer_periode);
 
-    // Clear the core timer count register
+    /* Clear the core timer count register */
     _CP0_SET_COUNT(0);
     
-    // Set the next compare value
+    /* Set the next compare value */
     coretimer_compare_value += coretimer_periode;
     
-    // Enable the core timer interrupt
-    IPC0bits.CTIP = 2;  // Set core timer interrupt priority
-    IPC0bits.CTIS = 0;  // Set core timer interrupt sub-priority
-    IEC0SET = _IEC0_CTIE_MASK; // Enable the core timer interrupt
-
-    if (int_flag)
-    {
-        /* Enable interrupts globally */
-        __builtin_enable_interrupts();
-    }
-}
-
-/* @brief Start Core timer - Enable IT
- */
-void CORETIMER_Start(void)
-{
-    /* Clear the core timer interrupt flag */
-    IFS0CLR = _IFS0_CTIF_MASK; 
+    /* Set interrupt priority */
+    IPC0bits.CTIP = 1;  /* Set core timer interrupt priority [1..7] */
+    IPC0bits.CTIS = 0;  /* Set core timer interrupt sub-priority [0..3] */
     
-    /* Enable the core timer interrupt */
-    IEC0SET = _IEC0_CTIE_MASK;
+    CORETIMER_Start();
 }
-
-/* @brief Stop Core timer - Disable IT
- */
-void CORETIMER_Stop(void)
-{
-    IEC0CLR = _IEC0_CTIE_MASK;
-}
-
 
 void CORETIMER_count_tick(unsigned long nCount)
 {
@@ -120,12 +104,6 @@ void CORETIMER_delay_ms(unsigned long msec)
     while (_CP0_GET_COUNT() < stop);
 }
 
-
-
-typedef void (*CORETIMER_CallbackFunct)(uintptr_t context);
-static CORETIMER_CallbackFunct CallbackEventHandler = NULL;
-static uintptr_t CallbackContext;
-
 void CORETIMER_CallbackRegister(void* callbackFunc, uintptr_t context)
 {
     if (callbackFunc == NULL)
@@ -133,49 +111,38 @@ void CORETIMER_CallbackRegister(void* callbackFunc, uintptr_t context)
         return;
     }
     
-    CallbackEventHandler = (CORETIMER_CallbackFunct)callbackFunc;
-    CallbackContext = context;
+    coretimer_obj.callbackFunc = (CORETIMER_CallbackFunct)callbackFunc;
+    coretimer_obj.context = context;
 }
 
 __attribute__((weak)) void CORETIMER_callback(void)
 {
 }
 
-#if 0
-/* Determine IPL and context-saving mode at runtime */
-void __interrupt(2) myisr2_RUNTIME(void) 
+void __ISR(_CORE_TIMER_VECTOR, IPL1AUTO) _InterruptCoreTimerHandler(void)
 {
-}
-#endif
-
-
-
-/*! \brief CoreTimer interrupt
- * 
- * \param[in] vector name
- * \param[in] priority level
- */
-void __ISR(_CORE_TIMER_VECTOR, IPL2AUTO) _InterruptCoreTimerHandler(void)
-{
-    // update the period
+    /* Start Critical Section */
+    (void) __builtin_disable_interrupts();
+    
+    /* update the period */
     _CP0_SET_COMPARE(coretimer_compare_value);
     
-    // Set the next compare value
+    /* Set the next compare value */
     coretimer_compare_value += coretimer_periode;
     
-    // Toggle the LED
-    //LED_3_Toggle();
+    /* Clear the core timer interrupt flag */
+    IFS0CLR = _IFS0_CTIF_MASK;
     
-    // Clear the core timer interrupt flag
-    IFS0CLR = _IFS0_CTIF_MASK; 
+    /* End Critical Section */
+    (void) __builtin_enable_interrupts();
 
-    
-    // Callback function
-    if (CallbackEventHandler != NULL)
+    /* Example 1 : Callback function with function pointer */
+    if (coretimer_obj.callbackFunc != NULL)
     {
-        CallbackEventHandler(CallbackContext);
+        coretimer_obj.callbackFunc(coretimer_obj.context);
     }
     
+    /* Example 2 : Callback function with weak */
     CORETIMER_callback();
 }
 

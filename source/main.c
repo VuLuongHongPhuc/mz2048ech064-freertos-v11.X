@@ -116,8 +116,6 @@
 #include "gpio.h"
 #include "core_timer.h"
 #include "tim2.h"
-#include "led.h"
-
 #include "task_main.h"
 #include "task_statistic.h"
 #include "task_display.h"
@@ -142,6 +140,8 @@ void CORETIMER_EventHandler(uintptr_t context)
     (void)context;
 
     // 1000 ms OK
+    
+    LED_RF4_Toggle();
 }
 
 
@@ -160,8 +160,6 @@ int main(void)
     /*** initialize */ 
     SYS_Initialize();                /* system */
     GPIO_init();                     /* GPIO */
-    LED_Initialize();
-    CORETIMER_Initialize(1000);      /* CORE timer */
     //TMR2_Initialize();               /* timers 2 */
     
     /*** Set callback */

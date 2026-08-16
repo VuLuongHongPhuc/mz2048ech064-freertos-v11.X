@@ -25,7 +25,6 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
 #include "task_statistic.h"
 #include "tim3.h"
 #include "gpio.h"

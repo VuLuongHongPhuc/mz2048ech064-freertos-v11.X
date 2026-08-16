@@ -158,7 +158,6 @@ void DISPLAY_Task(void *parameters)
 
     while(1)
     {
-        //LED_1_Toggle();
         vTaskDelay(1000U);
         ILI9341_TEST_Sequence();
     }

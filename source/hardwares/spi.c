@@ -123,12 +123,12 @@ void SPI1_Initialize()
 
     
     /* Initialize Transfer Done interrupt p.120 p.146 */
-    //IPC27bits.SPI1TXIP = 0;      /*!< TX priority 0-7 */
-    //IPC27bits.SPI1TXIS = 3;      /*!< TX sub priority 0-3 */
-    //IPC27bits.SPI1RXIP = 0;      /*!< RX priority 0-7 */
-    //IPC27bits.SPI1RXIS = 2;      /*!< RX sub priority 0-3 */
-    //IPC27bits.SPI1EIP  = 0;      /*!< Fault priority 0-7 */
-    //IPC27bits.SPI1EIS  = 1;      /*!< Fault sub priority 0-3 */
+    //IPC27bits.SPI1TXIP = 0;      /*!< TX priority [1..7] */
+    //IPC27bits.SPI1TXIS = 3;      /*!< TX sub priority [0..3] */
+    //IPC27bits.SPI1RXIP = 0;      /*!< RX priority [1..7] */
+    //IPC27bits.SPI1RXIS = 2;      /*!< RX sub priority [0..3] */
+    //IPC27bits.SPI1EIP  = 0;      /*!< Fault priority [1..7] */
+    //IPC27bits.SPI1EIS  = 1;      /*!< Fault sub priority [0..3] */
     
     
     /* Enable Transfer Done Interrupt */

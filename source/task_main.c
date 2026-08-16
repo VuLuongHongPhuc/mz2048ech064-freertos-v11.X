@@ -26,7 +26,6 @@
 
 #include "task_main.h"
 #include "gpio.h"
-#include "led.h"
 
 
 /*** Constant *****************************************************************/
@@ -46,8 +45,7 @@ void MAIN_Task( void *pvParameters  )
     
     while(true)
     {
-        LED_3_Toggle();
-        //RB10_Toggle();
+        LED_RF3_Toggle();
 
         vTaskDelay(DEF_DELAY_MAIN_TASK);
     }

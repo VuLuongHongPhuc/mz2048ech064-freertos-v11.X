@@ -41,8 +41,8 @@ extern "C" {
     // OSCILLATOR EXTERN  : EC 24 MHz
 
     /* CP0.Count counts at half the CPU rate */
-    #define SYSCLOCK_HZ 100000000       // SYSCLOCK 100 MHz
-    #define CORE_TICK_HZ (SYSCLOCK_HZ / 2)
+    #define SYSCLOCK_HZ     100000000                // SYSCLOCK 100 MHz
+    #define CORE_TICK_HZ    (SYSCLOCK_HZ / 2)
     #define US_TO_CT_TICKS  (CORE_TICK_HZ/1000000UL) // uS to CoreTimer Ticks => n ticks/millisec
     #define MS_TO_CT_TICKS  (CORE_TICK_HZ/1000UL)    // mS to CoreTimer Ticks => n ticks/millisec
 
@@ -50,8 +50,22 @@ extern "C" {
 
 
     void CORETIMER_Initialize(uint32_t period);
-    //#define CORETIMER_Start()  (IEC0SET = _IEC0_CTIE_MASK) // Enable the core timer interrupt
-    //#define CORETIMER_Stop()   (IEC0CLR = _IEC0_CTIE_MASK) // Disable the core timer interrupt
+    
+    static inline void CORETIMER_Start()
+    {
+        /* Clear the core timer interrupt flag */
+        IFS0CLR = _IFS0_CTIF_MASK; 
+
+        /* Enable the core timer interrupt */
+        IEC0SET = _IEC0_CTIE_MASK;
+    }
+    
+    static inline void CORETIMER_Stop()
+    {
+        /* Disable the core timer interrupt */
+        IEC0CLR = _IEC0_CTIE_MASK;
+    }
+    
     void CORETIMER_CallbackRegister(void* callbackFunc, uintptr_t context);
     
     void CORETIMER_count_tick(unsigned long nCount);

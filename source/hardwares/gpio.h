@@ -67,9 +67,46 @@ extern "C" {
     #define IO_DIGITAL 0
     #define IO_ANALOG  1
     
+
+
+/*** LED **********************************************************************/
+
+//pin 38 RF3 - also use for USBID -> need to desactivate to use in I/O mode
+
+//#define LED_1_Port_Mask  0x0008 // bit.3
+#define LED_RF3                   LATFbits.LATF3
+#define PIN_RF3_Pos               3
+#define PIN_RF3_Mask              0x0008 // bit.3 = (1 << 3)
+#define LED_RF3_OutputEnable()    (TRISFCLR = PIN_RF3_Mask)
+#define LED_RF3_InputEnable()     (TRISFSET = PIN_RF3_Mask)
+#define LED_RF3_Set()             (LATFSET  = PIN_RF3_Mask)
+#define LED_RF3_Clear()           (LATFCLR  = PIN_RF3_Mask)
+#define LED_RF3_Toggle()          (PORTFINV = PIN_RF3_Mask)
+#define LED_RF3_Get()             ((PORTF >> PIN_RF3_Pos) & 0x1U)
+
+//pin 41 RF4
+#define PIN_RF4_Pos               4
+#define PIN_RF4_Mask              0x0010 // bit.4
+#define LED_RF4_OutputEnable()    (TRISFCLR = PIN_RF4_Mask)
+#define LED_RF4_InputEnable()     (TRISFSET = PIN_RF4_Mask)
+#define LED_RF4_Set()             (LATFSET  = PIN_RF4_Mask)
+#define LED_RF4_Clear()           (LATFCLR  = PIN_RF4_Mask)
+#define LED_RF4_Toggle()          (PORTFINV = PIN_RF4_Mask)
+#define LED_RF4_Get()             ((PORTF >> PIN_RF4_Pos) & 0x1U)
+
+
+
+//pin 42 RF5
+#define PIN_RF5_Pos               5
+#define PIN_RF5_Mask              0x0020
+#define LED_RF5_OutputEnable()    (TRISFCLR = PIN_F5_Mask)
+#define LED_RF5                   LATFbits.LATF5
+#define LED_RF5_Set()             (LED_3 = 1)
+#define LED_RF5_Clear()           (LED_3 = 0)
+#define LED_RF5_Toggle()          (LED_3 ^= 1)
+        
     
-    
-/**** GPIO *****************************************************************/
+/*** GPIO *********************************************************************/
 /* TRISx, LATx, */ 
     
 

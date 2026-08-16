@@ -8,8 +8,9 @@ void GPIO_init(void)
 {
 /*** Set mode : input/output **************************************************/
 
-    
-    
+    /* LED */
+    LATFCLR = PIN_RF3_Mask | PIN_RF4_Mask | PIN_RF5_Mask;
+    TRISFCLR = PIN_RF3_Mask | PIN_RF4_Mask | PIN_RF5_Mask;
     
     /* OUTPUT */
     RB10_OutputEnable();
@@ -19,14 +20,8 @@ void GPIO_init(void)
     ANSELEbits.ANSE5 = IO_DIGITAL;
     TRISEbits.TRISE5 = INPUT_PIN;
     CNPUEbits.CNPUE5 = CNPU_PULLUP_ENABLE;
-   
-    
-    /* ILI9143 LCD */
-    SPI_CS_OutputEnable();
-    SPI_Reset_OutputEnable();
-    SPI_DC_OutputEnable();
-    SPI_LED_OutputEnable();
-    //ANSELD = 0;
+ 
+  
 }
 
 /*EOF*/
