@@ -18,6 +18,32 @@
           <itemPath>source/devices/ILI9341/ili9341_test.h</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="f5" displayName="freeRTOS_kernel" projectFiles="true">
+        <logicalFolder name="f1" displayName="include" projectFiles="true">
+          <itemPath>source/FreeRTOS-Kernel/include/atomic.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/croutine.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/deprecated_definitions.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/event_groups.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/FreeRTOS.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/list.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/message_buffer.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/mpu_prototypes.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/mpu_syscall_numbers.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/mpu_wrappers.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/newlib-freertos.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/picolibc-freertos.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/portable.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/projdefs.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/queue.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/semphr.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/stack_macros.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/StackMacros.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/stdint.readme</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/stream_buffer.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/task.h</itemPath>
+          <itemPath>source/FreeRTOS-Kernel/include/timers.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
       <logicalFolder name="f3" displayName="Peripheral" projectFiles="true">
         <itemPath>source/hardwares/can1.h</itemPath>
         <itemPath>source/hardwares/can2.h</itemPath>
@@ -37,9 +63,11 @@
         <itemPath>source/task_statistic.h</itemPath>
         <itemPath>source/task_display.h</itemPath>
         <itemPath>source/task_test.h</itemPath>
+        <itemPath>source/task_config.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="Utils" projectFiles="true">
         <itemPath>source/Utils/convert_to_string.h</itemPath>
+        <itemPath>source/Utils/stream.h</itemPath>
       </logicalFolder>
       <itemPath>source/main.h</itemPath>
     </logicalFolder>
@@ -52,55 +80,6 @@
                    displayName="Linker Files"
                    projectFiles="true">
     </logicalFolder>
-    <logicalFolder name="f1" displayName="RTOS" projectFiles="true">
-      <logicalFolder name="f1" displayName="include" projectFiles="true">
-        <itemPath>source/FreeRTOS-Kernel/include/FreeRTOS.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/StackMacros.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/atomic.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/croutine.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/deprecated_definitions.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/event_groups.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/list.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/message_buffer.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/mpu_prototypes.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/mpu_syscall_numbers.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/mpu_wrappers.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/newlib-freertos.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/picolibc-freertos.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/portable.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/projdefs.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/queue.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/semphr.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/stack_macros.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/stdint.readme</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/stream_buffer.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/task.h</itemPath>
-        <itemPath>source/FreeRTOS-Kernel/include/timers.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f2" displayName="portable" projectFiles="true">
-        <logicalFolder name="f1" displayName="MemMang" projectFiles="true">
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/ReadMe.url</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_1.c</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_2.c</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_3.c</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_4.c</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_5.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f2" displayName="PIC32MZ" projectFiles="true">
-          <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/ISR_Support.h</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port.c</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port_asm.S</itemPath>
-          <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/portmacro.h</itemPath>
-        </logicalFolder>
-      </logicalFolder>
-      <itemPath>source/FreeRTOS-Kernel/croutine.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/event_groups.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/list.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/queue.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/stream_buffer.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/tasks.c</itemPath>
-      <itemPath>source/FreeRTOS-Kernel/timers.c</itemPath>
-    </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
@@ -109,6 +88,31 @@
           <itemPath>source/devices/ILI9341/ili9341.c</itemPath>
           <itemPath>source/devices/ILI9341/ili9341_test.c</itemPath>
         </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="f5" displayName="freeRTOS_kernel" projectFiles="true">
+        <logicalFolder name="f1" displayName="portable" projectFiles="true">
+          <logicalFolder name="f2" displayName="MemMang" projectFiles="true">
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_1.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_2.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_3.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_4.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_5.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/MemMang/ReadMe.url</itemPath>
+          </logicalFolder>
+          <logicalFolder name="f1" displayName="PIC32MZ" projectFiles="true">
+            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/ISR_Support.h</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port.c</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port_asm.S</itemPath>
+            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/portmacro.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <itemPath>source/FreeRTOS-Kernel/queue.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/stream_buffer.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/tasks.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/timers.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/list.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/event_groups.c</itemPath>
+        <itemPath>source/FreeRTOS-Kernel/croutine.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Peripheral" projectFiles="true">
         <itemPath>source/hardwares/can1.c</itemPath>
@@ -128,10 +132,10 @@
         <itemPath>source/task_statistic.c</itemPath>
         <itemPath>source/task_display.c</itemPath>
         <itemPath>source/task_test.c</itemPath>
-        <itemPath>source/task_config.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="Utils" projectFiles="true">
         <itemPath>source/Utils/convert_to_string.c</itemPath>
+        <itemPath>source/Utils/stream.c</itemPath>
       </logicalFolder>
       <itemPath>source/main.c</itemPath>
     </logicalFolder>
@@ -392,6 +396,7 @@
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
@@ -769,6 +774,24 @@
         <property key="toolpack.updateoptions.packversion"
                   value="Press to select which tool pack to use"/>
       </snap>
+      <item path="source/FreeRTOS-Kernel/portable/MemMang/heap_1.c"
+            ex="true"
+            overriding="false">
+        <C32>
+        </C32>
+        <C32-AR>
+        </C32-AR>
+        <C32-AS>
+        </C32-AS>
+        <C32-CO>
+        </C32-CO>
+        <C32-LD>
+        </C32-LD>
+        <C32CPP>
+        </C32CPP>
+        <C32Global>
+        </C32Global>
+      </item>
       <item path="source/FreeRTOS-Kernel/portable/MemMang/heap_2.c"
             ex="true"
             overriding="false">
@@ -806,7 +829,7 @@
         </C32Global>
       </item>
       <item path="source/FreeRTOS-Kernel/portable/MemMang/heap_4.c"
-            ex="true"
+            ex="false"
             overriding="false">
         <C32>
         </C32>

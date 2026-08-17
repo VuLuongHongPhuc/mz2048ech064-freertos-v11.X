@@ -11,16 +11,19 @@
  */
 
 /********************************* Includes ***********************************/
-#include "xc.h"
-#include <sys/attribs.h>  // IPLxAUTO, IPLxSRS
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+
+#include "xc.h"
+#include <sys/attribs.h>  // IPLxAUTO, IPLxSRS
 
 #include <FreeRTOS.h>
 #include <stream_buffer.h>
 
 #include "gpio.h"
+#include "stream.h"
 
 /********************************* Constants***********************************/
 
@@ -28,17 +31,14 @@
 #define __UART1_INT_RX_ENABLE__     1
 #define __UART1_INT_FAULT_ENABLE__  0
 
-#define UART_FIFO_SIZE             8U
+#define UART1_FIFO_SIZE            8U
 #define TX_BUFFER_SIZE           128U
 
 
 /********************************* Local variables ****************************/
 static uint8_t _txBuf[TX_BUFFER_SIZE+1];
 
-//static StreamBufferHandle_t _xStreamBuffer = NULL;
-//static StaticStreamBuffer_t pxStaticStreamBuffer;
-
-
+static Stream_t _txStream;
 /********************************* Local prototypes ***************************/
 static void SetBaudrate(uint32_t baud);
 static void InterruptConfiguration(void);
@@ -59,18 +59,7 @@ void UART1_Initialize(void)
      * UxMode Default 8N1
      */
     
-    /*
-    _xStreamBuffer = xStreamBufferCreateStatic( TX_BUFFER_SIZE,
-                                                1,
-                                                &_txBuf[0],
-                                                &pxStaticStreamBuffer );
-    */
-    
-    uint32_t int_flag;
-    
-    /* Disable interrupt */
-    //int_flag = (uint32_t)__builtin_disable_interrupts();
-    
+    STREAM_Initialize(&_txStream, _txBuf, TX_BUFFER_SIZE);
     
     /* Disable */
     U1MODEbits.ON = 0;
@@ -92,12 +81,6 @@ void UART1_Initialize(void)
     /* Set interrupt */
     InterruptConfiguration();
 
-  
-    
-    /* Enable interrupt */
-    //if (int_flag)        __builtin_enable_interrupts();
-    
-    
     
     /* Enable */
     U1MODEbits.ON = 1;
@@ -178,9 +161,34 @@ static void InterruptConfiguration(void)
 
 }
 
-
-bool UART1_Write(uint8_t const * const pBuf, uint16_t length)
+bool UART1_Write(uint8_t const * const pBuf, size_t length)
 {
+    /* check paramaters */
+    if ( !pBuf || !length)
+	{
+		return false;
+	}
+    
+    int index = 0;
+    while (length != 0)
+    {
+        /* wait TX FIFO free space */
+        while (U1STAbits.UTXBF)
+        {
+            /* Do nothing */
+        }
+        
+        U1TXREG = pBuf[index++];
+        
+        length--;
+    }
+    
+    return true;
+}
+
+bool UART1_WriteIT(uint8_t const * const pBuf, size_t length)
+{
+    /* check paramaters */
     if ( !pBuf || !length)
 	{
 		return false;
@@ -195,15 +203,15 @@ bool UART1_Write(uint8_t const * const pBuf, uint16_t length)
     if (!U1STAbits.UTXBF)
     {
         if (length > 1) 
-        {
-            //(void) xStreamBufferSend(_xStreamBuffer, &pBuf[1], length - 1, (TickType_t) 5);
+        {            
+            (void) STREAM_Write(&_txStream, &pBuf[1], length - 1);
         }
 
         U1TXREG = pBuf[0];
     }
     else
     {
-        //(void) xStreamBufferSend(_xStreamBuffer, pBuf, length, (TickType_t) 5);
+        (void) STREAM_Write(&_txStream, pBuf, length);
     }
 
     IEC3SET = _IEC3_U1TXIE_MASK;    /* Enable interrupt */
@@ -228,7 +236,7 @@ __attribute__((weak)) void UART1_ERROR_Callback(void)
 
 void __ISR(_UART1_RX_VECTOR, IPL1AUTO) _InterruptUart1RxHandler(void)
 {    
-    volatile uint32_t status = 1;
+    static volatile uint32_t status = 1;
 
     UART1_RX_Callback((uintptr_t)&status);
     
@@ -237,22 +245,13 @@ void __ISR(_UART1_RX_VECTOR, IPL1AUTO) _InterruptUart1RxHandler(void)
 }
 
 void __ISR(_UART1_TX_VECTOR, IPL1AUTO) _InterruptUart1TxHandler(void)
-{    
-    // Toggle the LED
-    //LED_2_Toggle();
+{
+    static uint8_t data[UART1_FIFO_SIZE+1] = {0};
     
-    uint8_t data[UART_FIFO_SIZE+1];
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;  /* Initialised to pdFALSE. */
-    size_t xReceivedBytes;
-	/*
-    size_t xReceivedBytes = xStreamBufferReceiveFromISR(_xStreamBuffer,
-                                                        &data,
-                                                        UART_FIFO_SIZE,
-                                                        &xHigherPriorityTaskWoken );
-     */
-    if (xReceivedBytes > 0)
+    size_t numberOfBytesRead = STREAM_Read(&_txStream, data, UART1_FIFO_SIZE);
+    if (numberOfBytesRead > 0)
     {
-        for(size_t i=0; i<xReceivedBytes; i++)
+        for(size_t i=0; i<numberOfBytesRead; i++)
         {
             U1TXREG = data[i];
         }
@@ -263,22 +262,14 @@ void __ISR(_UART1_TX_VECTOR, IPL1AUTO) _InterruptUart1TxHandler(void)
     }    
     
     IFS3CLR = _IFS3_U1TXIF_MASK;    /* Clear the interrupt flag */
-    
-    if( xHigherPriorityTaskWoken == pdTRUE )
-    {
-		portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
-    }
 }
 
 void __ISR(_UART1_FAULT_VECTOR, IPL1AUTO) _InterruptUart1FaultHandler(void)
 {    
-    // Toggle the LED
-    //LED_2_Toggle();
-    
     UART1_ERROR_Callback();
     
     // Clear the interrupt flag
-    IFS3CLR = _IFS3_U1EIF_MASK;    
+    IFS3CLR = _IFS3_U1EIF_MASK;
 }
 
 /* *****************************************************************************

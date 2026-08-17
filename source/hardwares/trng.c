@@ -15,7 +15,6 @@
  */
 /* ************************************************************************** */
 
-#include "xc.h"
 #include "trng.h"
 
 #define TRNG_VALIDE_BITS     42U   /* Rang [1..64] */
@@ -36,10 +35,9 @@ void TRNG_Initialize( void )
     RNGCONbits.CONT = 1;        /* PRNG Number Shift Enable - new number each cycle */
     
     /* TRNG Operation Enable/Disable - don't work */
-    RNGCONbits.TRNGEN = 0;
+    TRNG_Disable(); /* Disable true random */
 
-    /* PRNG Operation Enable */
-    RNGCONbits.PRNGEN = 1;
+    PRNG_Disable(); /* disable pseudo random */
     
     
     /* Transfer RNGSEEDx to RNGNUMGENx */
@@ -59,7 +57,6 @@ uint32_t PRNG_GetNumGen( uint8_t index )
     return 0;
 }
 
-
 void TRNG_WaitForCnt( void )
 {
     // !! don't work - bug
@@ -70,18 +67,6 @@ void TRNG_WaitForCnt( void )
     
     // RNGSEEDx ready to read or move to RNGNUMGENx with LOAD
 }
-
-void TRNG_Enable( void )
-{
-    RNGCONbits.TRNGEN = 1;
-}
-
-void TRNG_Disable( void )
-{
-    RNGCONbits.TRNGEN = 0;
-}
-
-
 
 /* *****************************************************************************
  End of File

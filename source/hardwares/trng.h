@@ -19,12 +19,7 @@
 #define _M_TRNG_H
 
 
-/* ************************************************************************** */
-/* ************************************************************************** */
-/* Section: Included Files                                                    */
-/* ************************************************************************** */
-/* ************************************************************************** */
-
+#include <xc.h>
 
 
 /* Provide C++ Compatibility */
@@ -35,9 +30,29 @@ extern "C" {
     void TRNG_Initialize( void );
     void TRNG_WaitForCnt( void );
     uint32_t PRNG_GetNumGen( uint8_t index );
+    
+    static inline void TRNG_Enable( void )
+    {
+        RNGCONbits.TRNGEN = 1;
+    }
 
+    static inline void TRNG_Disable( void )
+    {
+        RNGCONbits.TRNGEN = 0;
+    }
+    
+    static inline void PRNG_Enable( void )
+    {
+        RNGCONbits.PRNGEN = 1;
+    }
+    
+    static inline void PRNG_Disable( void )
+    {
+        RNGCONbits.PRNGEN = 0;
+    }
+    
 
-    /* Provide C++ Compatibility */
+/* Provide C++ Compatibility */
 #ifdef __cplusplus
 }
 #endif

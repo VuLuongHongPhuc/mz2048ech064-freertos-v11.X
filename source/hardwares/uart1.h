@@ -15,13 +15,16 @@
  */
 /* ************************************************************************** */
 
-#ifndef _UART1_H    /* Guard against multiple inclusion */
-#define _UART1_H
+#ifndef _UART1_HEADER    /* Guard against multiple inclusion */
+#define _UART1_HEADER
 
 
 /********************************* Includes ***********************************/
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+
+#include "dma.h"
 
 /* Provide C++ Compatibility */
 #ifdef __cplusplus
@@ -31,15 +34,24 @@ extern "C" {
     
     
 extern void UART1_Initialize(void);
-extern bool UART1_Write(uint8_t const * const pBuf, uint16_t length);
+
+extern bool UART1_Write(uint8_t const * const pBuf, size_t length);
+
+extern bool UART1_WriteIT(uint8_t const * const pBuf, size_t length);
+
+static inline bool UART1_WriteDma(uint8_t* pBuf, size_t size)
+{
+    return DMA_CH0_UART1_TX_Transfer(pBuf, size);
+}
 
 
-    /* Provide C++ Compatibility */
+
+/* Provide C++ Compatibility */
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _UART1_H */
+#endif /* _UART1_HEADER */
 
 /* *****************************************************************************
  End of File

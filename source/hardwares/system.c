@@ -14,6 +14,7 @@
 #include "uart1.h"
 #include "spi.h"
 #include "core_timer.h"
+#include "dma.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -74,31 +75,30 @@ void SYS_Initialize(void)
     
     PeripheralClock();
     
-    /* Configure Prefetch, Wait States and ECC */
-    PRECONbits.PREFEN = 0b11;
-    PRECONbits.PFMWS  = 0b001;
-    CFGCONbits.ECCCON = 0b11; // (default)
+    /*** Configure Prefetch, Wait States and ECC */
+    PRECONbits.PREFEN = 0b11;  /* Prefetch is enabled */
+    PRECONbits.PFMWS  = 0b001; /* Data Memory SRAM wait states: One Wait state */
+    CFGCONbits.ECCCON = 0b11;  /* ECC is enabled for both cacheable and non-cacheable regions */
+    
     CFGCONbits.JTAGEN = 0;    // disable JTAG (default)
     
-    // Data Memory SRAM wait states: Default Setting = 1; set it to 0
-    //BMXCONbits.BMXWSDRM = 1;
-    
-// *** interrupt **********************
-    
+    /*** Interrupt mode */    
     // 0: Interrupt controller configured for Single-vectored mode
     // 1: Interrupt controller configured for Multi-vectored mode
     INTCONSET = _INTCON_MVEC_MASK; // INTCONbits.MVEC = 1;
     
     // Interrupt Proximity Timer Control bits
-    //INTCONbits.TPC = 0; //default disable
+    INTCONbits.TPC = 0; /* disable */
     
-    
+    /* Initialize GPIO */
     GPIO_init();
     
     /* Initialize peripheral */
     CORETIMER_Initialize(1000);
+    DMA_Initialize();
     UART1_Initialize();
     //SPI1_Initialize();
+    TRNG_Initialize();
 
     
     (void)__builtin_enable_interrupts();

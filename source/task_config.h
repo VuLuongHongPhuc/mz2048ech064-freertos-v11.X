@@ -26,25 +26,41 @@
 extern "C" {
 #endif
 
+    /* Tasks StackSize : 32bits -> (n * 4) */
+    #define TASK_STACKSIZE_MAIN                 (512)      /* 512*4 octets */
+    #define TASK_STACKSIZE_DISPLAY              (512)      /* 512*4 octets */
+    #define TASK_STACKSIZE_TEST                 (512)      /* 512*4 octets */
+    #define TASK_STACKSIZE_MONITOR              (256)      /* 256*4 octets */
+
+    /* Tasks ID */
+    #define TASK_ID_MAIN         0
+    #define TASK_ID_DISPLAY      (TSK_ID_MAIN + 1)
+    #define TASK_ID_TEST         (TASK_ID_DISPLAY + 1)
+    #define TASK_ID_MONITOR      (TSK_ID_TEST + 1)
+    #define TASK_ID_MAX          (TSK_ID_MONITOR + 1)
+    
+    /* Define priority configMAX_PRIORITIES = 5 */
+    #define PRIORITY_HIGHEST        (configMAX_PRIORITIES - 1)
+    #define PRIORITY_NORMAL         (configMAX_PRIORITIES - 2)
+    #define PRIORITY_LOWEST         (configMAX_PRIORITIES - 3)
+    #define PRIORITY_ABOVE_IDLE     (configMAX_PRIORITIES - 4)
+    #define PRIORITY_IDLE           (0)    
 
     /* Tasks priorities */
-    #define DEF_TASK_PRIORITY_MAIN                  (configMAX_PRIORITIES - 1)
-    #define DEF_TASK_PRIORITY_STATISTIC             (configMAX_PRIORITIES - 4)
-    #define DEF_TASK_PRIORITY_TEST                  (configMAX_PRIORITIES - 2)
-
-    /* Tasks StackSize : 32bits -> (n * 4) */
-    #define DEF_TASK_STACKSIZE_MAIN                 (512)      /* 512*4 octets */
-    #define DEF_TASK_STACKSIZE_STATISTIC            (256)      /* 256*4 octets */
-    #define DEF_TASK_STACKSIZE_TEST                 (512)      /* 512*4 octets */
-
-    /* Tasks debug name */
-    #define DEF_TASK_DEBUG_NAME_MAIN        "Task_Main"
-    #define DEF_TASK_DEBUG_NAME_STATISTIC   "Task_Statistic"
-    #define DEF_TASK_DEBUG_NAME_TEST        "Task_Test"
+    #define TASK_PRIORITY_MAIN                  PRIORITY_NORMAL
+    #define TASK_PRIORITY_DISPLAY               PRIORITY_LOWEST
+    #define TASK_PRIORITY_TEST                  PRIORITY_LOWEST
+    #define TASK_PRIORITY_MONITOR               PRIORITY_ABOVE_IDLE
+    
+    /* Tasks name for debug */
+    #define TASK_NAME_MAIN        "Task_Main"
+    #define TASK_NAME_DISPLAY     "Task_Display"
+    #define TASK_NAME_MONITOR     "Task_Monitor"
+    #define TASK_NAME_TEST        "Task_Test"
 
     
 
-    /* Provide C++ Compatibility */
+/* Provide C++ Compatibility */
 #ifdef __cplusplus
 }
 #endif

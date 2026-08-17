@@ -94,11 +94,7 @@
 
 
 
-/* ************************************************************************** */
-/* ************************************************************************** */
-/* Section: Included Files                                                    */
-/* ************************************************************************** */
-/* ************************************************************************** */
+/********************************* Includes ***************************************/
 
 
 #include <stddef.h>                     // Defines NULL
@@ -123,15 +119,17 @@
 #include "task_config.h"
 
 
-/*** Variables ************        ********************************************/
+/********************************* Constants definition ***************************/
+/********************************* Macros definition ******************************/
+/********************************* Types definition *******************************/
+
 extern TaskHandle_t xTask_Main;
 
+/********************************* Local prototype ********************************/
 
-/*** Functions prototype   ****************************************************/
+void CreateTasks(void);
 
-
-
-
+/********************************* Implemantations ********************************/
 
 /* This function is called at specified periodic interval */
 void CORETIMER_EventHandler(uintptr_t context)
@@ -140,10 +138,7 @@ void CORETIMER_EventHandler(uintptr_t context)
     (void)context;
 
     // 1000 ms OK
-    
-    LED_RF4_Toggle();
 }
-
 
 void TMR2_EventHandler(uint32_t status, uintptr_t context)
 {
@@ -154,65 +149,25 @@ void TMR2_EventHandler(uint32_t status, uintptr_t context)
     // 1 ms - OK
 }
 
-
 int main(void)
 {
     /*** initialize */ 
     SYS_Initialize();                /* system */
-    GPIO_init();                     /* GPIO */
     //TMR2_Initialize();               /* timers 2 */
     
     /*** Set callback */
-    CORETIMER_CallbackRegister(CORETIMER_EventHandler, (uintptr_t) NULL); /* CORETIMER Register */
+    CORETIMER_CallbackRegister(CORETIMER_EventHandler, (uintptr_t) NULL);   /* CORETIMER Register */
     //TMR2_CallbackRegister(TMR2_EventHandler, (uintptr_t) NULL);           /* TIM Register */
     
     /* start timers */
     //TMR2_Start();
     
+    
     /*** RTOS section */
     
-    // static task create
-    // https://www.freertos.org/a00110.html#configKERNEL_PROVIDED_STATIC_MEMORY
-    
-   
-
-    (void) xTaskCreate((TaskFunction_t) MAIN_Task,   /*!< Pointer to the task entry function */
-                DEF_TASK_DEBUG_NAME_MAIN,            /*!< Task name */
-                DEF_TASK_STACKSIZE_MAIN,             /*!< Stack size (not bytes!) -> system 32bits => 1024 x4 = 4096 bytes */
-                NULL,                                /*!< Parameter */
-                DEF_TASK_PRIORITY_MAIN,              /*!< Task priority level */
-                &xTask_Main);                        /*!< Used to pass a handle to the created task out of the xTaskCreate() function */
-    
-    (void) xTaskCreate((TaskFunction_t) STATISTIC_Task,
-                DEF_TASK_DEBUG_NAME_STATISTIC,
-                DEF_TASK_STACKSIZE_STATISTIC,
-                (void *) 1UL,
-                DEF_TASK_PRIORITY_STATISTIC,
-                (TaskHandle_t*)NULL );
-    
-    (void) xTaskCreate((TaskFunction_t) TEST_Task,
-                DEF_TASK_DEBUG_NAME_TEST,
-                DEF_TASK_STACKSIZE_TEST,
-                (void *) 1UL,
-                DEF_TASK_PRIORITY_TEST,
-                (TaskHandle_t*)NULL );
-  
-    
-
-#if 1
-    (void) xTaskCreate((TaskFunction_t) DISPLAY_Task,
-                "Display",
-                256,
-                NULL,
-                1,
-                (TaskHandle_t*)NULL);
-#endif
+    CreateTasks();
     
     /* Start RTOS Scheduler. */
-    
-     /**********************************************************************
-     * Create all Threads for APP Tasks before starting FreeRTOS Scheduler *
-     ***********************************************************************/
     vTaskStartScheduler(); /* This function never returns. */
     
     
@@ -224,29 +179,40 @@ int main(void)
     return ( EXIT_FAILURE );
 }
 
-#if 0
+
 void CreateTasks(void)
 {
-    TaskHandle_t ret_task = NULL;
+    (void) xTaskCreate((TaskFunction_t) MAIN_Task,   /*!< Pointer to the task entry function */
+                TASK_NAME_MAIN,                      /*!< Task name */
+                TASK_STACKSIZE_MAIN,                 /*!< Stack size (not bytes!) -> system 32bits => 1024 x4 = 4096 bytes */
+                NULL,                                /*!< Parameter */
+                TASK_PRIORITY_MAIN,                  /*!< Task priority level */
+                &xTask_Main);                        /*!< Used to pass a handle to the created task out of the xTaskCreate() function */
     
-    static StaticTask_t xMainTask;
-    static StackType_t uxMainTaskStack[DEF_TASK_STACKSIZE_MAIN] = {0};
+    (void) xTaskCreate((TaskFunction_t) STATISTIC_Task,
+                TASK_NAME_MONITOR,
+                TASK_STACKSIZE_MONITOR,
+                (void *) 1UL,
+                TASK_PRIORITY_MONITOR,
+                (TaskHandle_t*)NULL );
     
-    ret_task = xTaskCreateStatic((TaskFunction_t) MAIN_Task,    /* Pointer to the task entry function */
-                             DEF_TASK_DEBUG_NAME_MAIN,          /* Task name */
-                             DEF_TASK_STACKSIZE_MAIN,           /* Stack size (not bytes!) -> system 32bits => size x4 = n bytes */
-                             (void *) 1UL,                      /* Parameter */
-                             DEF_TASK_PRIORITY_MAIN,            /* Task priority level */
-                             &( uxMainTaskStack[0] ),           /* Stack buffer */
-                             &( xMainTask ));                   /* Used to pass a handle to the created task out of the xTaskCreate() function */
+    (void) xTaskCreate((TaskFunction_t) TEST_Task,
+                TASK_NAME_TEST,
+                TASK_STACKSIZE_TEST,
+                (void *) 1UL,
+                TASK_PRIORITY_TEST,
+                (TaskHandle_t*)NULL );
 
-    if (ret_task == NULL)
-    {
-        //ErrorBuild();
-        
-    }
-}
+#if 0
+    (void) xTaskCreate((TaskFunction_t) DISPLAY_Task,
+                TASK_NAME_DISPLAY,
+                TASK_STACKSIZE_DISPLAY,
+                NULL,
+                TASK_PRIORITY_DISPLAY,
+                (TaskHandle_t*)NULL);
 #endif
+}
+
 
 /* *****************************************************************************
  End of File
