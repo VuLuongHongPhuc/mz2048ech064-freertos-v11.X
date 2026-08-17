@@ -19,12 +19,9 @@
 #define _DRV_TIM3_H
 
 
-/* ************************************************************************** */
-/* ************************************************************************** */
-/* Section: Included Files                                                    */
-/* ************************************************************************** */
-/* ************************************************************************** */
-
+/********************************* Includes ***********************************/
+#include <stdint.h>
+#include <xc.h>
 
 
 /* Provide C++ Compatibility */
@@ -32,37 +29,51 @@
 extern "C" {
 #endif
 
-    // *****************************************************************************
-    // *****************************************************************************
-    // Section: Data Types
-    // *****************************************************************************
-    // *****************************************************************************
-
-    typedef void (*TMR3_CALLBACK)(uint32_t status, uintptr_t context);
+/********************************* Constants definition ***********************/
     
-    typedef struct
-    {
-        /*TMR callback function happens on Period match*/
-        TMR3_CALLBACK callback_fn;
-        /* - Client data (Event Context) that will be passed to callback */
-        uintptr_t context;
-
-    }TMR3_TIMER_OBJECT;
-   
+/********************************* Macros definition **************************/
     
+/********************************* Types definition ***************************/
+    
+    typedef void (*TMR3_CALLBACK)(uintptr_t context);
+    
+/********************************* Public variables ***************************/
 
+/********************************* API functions prototype ********************/
 
     void TMR3_Initialize(void);
-    void TMR3_Start(void);
-    void TMR3_Stop (void);
-    void TMR3_PeriodSet(uint16_t period);
-    uint16_t TMR3_PeriodGet(void);
-    uint16_t TMR3_CounterGet(void);
+
     void TMR3_InterruptEnable(void);
     void TMR3_InterruptDisable(void);
     void TMR3_CallbackRegister( TMR3_CALLBACK callback_fn, uintptr_t context );
+    
+    static inline void TMR3_Start(void)
+    {
+        T3CONSET = _T3CON_ON_MASK;
+    }
 
-    /* Provide C++ Compatibility */
+    static inline void TMR3_Stop (void)
+    {
+        T3CONCLR = _T3CON_ON_MASK;
+    }
+
+    static inline void TMR3_PeriodSet(uint16_t period)
+    {
+        PR3  = period;
+    }
+
+    static inline uint16_t TMR3_PeriodGet(void)
+    {
+        return (uint16_t)PR3;
+    }
+    
+    static inline uint16_t TMR3_CounterGet(void)
+    {
+        return (uint16_t)(TMR3);
+    }
+
+
+/* Provide C++ Compatibility */
 #ifdef __cplusplus
 }
 #endif

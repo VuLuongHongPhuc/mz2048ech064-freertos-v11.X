@@ -16,6 +16,7 @@
 #include "core_timer.h"
 #include "dma.h"
 #include "trng.h"
+#include "tim3.h"
 
 /* ************************************************************************** */
 /* ************************************************************************** */
@@ -100,6 +101,7 @@ void SYS_Initialize(void)
     UART1_Initialize();
     //SPI1_Initialize();
     TRNG_Initialize();
+    TMR3_Initialize();
 
     
     (void)__builtin_enable_interrupts();

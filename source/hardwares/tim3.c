@@ -15,15 +15,38 @@
  */
 /* ************************************************************************** */
 
+
+/********************************* Includes ***********************************/
+
 #include "xc.h"
 #include <sys/attribs.h>  // IPLxAUTO, IPLxSRS
 #include "tim3.h"
 
-#define TMR3_FREQ_WISH   20000u /* 20kHz */
+/********************************* Constants definition ***********************/
+    
+#define TMR3_FREQ_WISH   20000U /* 20kHz */
 
-volatile static TMR3_TIMER_OBJECT tmr3Obj;
+/********************************* Macros definition **************************/
+    
+/********************************* Types definition ***************************/
 
+typedef struct
+{
+    /*TMR callback function happens on Period match*/
+    TMR3_CALLBACK callback_fn;
+    /* - Client data (Event Context) that will be passed to callback */
+    uintptr_t context;
 
+}TMR3Obj_t;
+
+/********************************* Local variables ****************************/
+
+volatile static TMR3Obj_t _tmr3 = {
+    .callback_fn = NULL,
+    .context = 0
+};
+
+/********************************* API functions ******************************/
 
 void TMR3_Initialize(void)
 {
@@ -82,31 +105,6 @@ void TMR3_Initialize(void)
      */
 }
 
-void TMR3_Start(void)
-{
-    T3CONSET = _T3CON_ON_MASK;
-}
-
-void TMR3_Stop (void)
-{
-    T3CONCLR = _T3CON_ON_MASK;
-}
-
-void TMR3_PeriodSet(uint16_t period)
-{
-    PR3  = period;
-}
-
-uint16_t TMR3_PeriodGet(void)
-{
-    return (uint16_t)PR3;
-}
-
-uint16_t TMR3_CounterGet(void)
-{
-    return (uint16_t)(TMR3);
-}
-
 uint32_t TMR3_FrequencyGet(void)
 {
     return (TMR3_FREQ_WISH);
@@ -130,27 +128,26 @@ void TMR3_InterruptDisable(void)
 void TMR3_CallbackRegister( TMR3_CALLBACK callback_fn, uintptr_t context )
 {
     /* Save callback_fn and context in local memory */
-    tmr3Obj.callback_fn = callback_fn;
-    tmr3Obj.context = context;
+    _tmr3.callback_fn = callback_fn;
+    _tmr3.context = context;
 }
 
 
 void __attribute__((used)) TIMER_3_InterruptHandler (void)
 {
-    uint32_t status  = 0U;
-    status = IFS0bits.T3IF;    /* Copy status */
-    IFS0CLR = _IFS0_T3IF_MASK; /* Clear flag */
+    //IFS0bits.T3IF;    /* Event trigger */
 
-    if((tmr3Obj.callback_fn != NULL))
+    if((_tmr3.callback_fn != NULL))
     {
-        uintptr_t context = tmr3Obj.context;
-        tmr3Obj.callback_fn(status, context);
+        _tmr3.callback_fn(_tmr3.context);
     }
 }
 
 void __ISR(_TIMER_3_VECTOR, IPL1AUTO) _InterruptTimer3Handler(void)
 {
     TIMER_3_InterruptHandler();
+    
+    IFS0CLR = _IFS0_T3IF_MASK; /* Clear flag */
 }
 
 /*** Interrupt ****************************************************************/

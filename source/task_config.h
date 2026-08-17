@@ -30,14 +30,14 @@ extern "C" {
     #define TASK_STACKSIZE_MAIN                 (512)      /* 512*4 octets */
     #define TASK_STACKSIZE_DISPLAY              (512)      /* 512*4 octets */
     #define TASK_STACKSIZE_TEST                 (512)      /* 512*4 octets */
-    #define TASK_STACKSIZE_MONITOR              (256)      /* 256*4 octets */
+    #define TASK_STACKSIZE_MONITOR              (512)      /* 512*4 octets */
 
     /* Tasks ID */
     #define TASK_ID_MAIN         0
-    #define TASK_ID_DISPLAY      (TSK_ID_MAIN + 1)
+    #define TASK_ID_DISPLAY      (TASK_ID_MAIN + 1)
     #define TASK_ID_TEST         (TASK_ID_DISPLAY + 1)
-    #define TASK_ID_MONITOR      (TSK_ID_TEST + 1)
-    #define TASK_ID_MAX          (TSK_ID_MONITOR + 1)
+    #define TASK_ID_MONITOR      (TASK_ID_TEST + 1)
+    #define TASK_ID_MAX          (TASK_ID_MONITOR + 1)
     
     /* Define priority configMAX_PRIORITIES = 5 */
     #define PRIORITY_HIGHEST        (configMAX_PRIORITIES - 1)
