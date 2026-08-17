@@ -113,7 +113,7 @@
 #include "core_timer.h"
 #include "tim2.h"
 #include "task_main.h"
-#include "task_statistic.h"
+#include "task_monitor.h"
 #include "task_display.h"
 #include "task_test.h"
 #include "task_config.h"
@@ -189,7 +189,7 @@ void CreateTasks(void)
                 TASK_PRIORITY_MAIN,                  /*!< Task priority level */
                 &xTask_Main);                        /*!< Used to pass a handle to the created task out of the xTaskCreate() function */
     
-    (void) xTaskCreate((TaskFunction_t) STATISTIC_Task,
+    (void) xTaskCreate((TaskFunction_t) Monitor_Task,
                 TASK_NAME_MONITOR,
                 TASK_STACKSIZE_MONITOR,
                 (void *) 1UL,

@@ -18,7 +18,7 @@
           <itemPath>source/devices/ILI9341/ili9341_test.h</itemPath>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="f5" displayName="freeRTOS_kernel" projectFiles="true">
+      <logicalFolder name="f5" displayName="FreeRTOS" projectFiles="true">
         <logicalFolder name="f1" displayName="include" projectFiles="true">
           <itemPath>source/FreeRTOS-Kernel/include/atomic.h</itemPath>
           <itemPath>source/FreeRTOS-Kernel/include/croutine.h</itemPath>
@@ -43,6 +43,11 @@
           <itemPath>source/FreeRTOS-Kernel/include/task.h</itemPath>
           <itemPath>source/FreeRTOS-Kernel/include/timers.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="f2" displayName="portable" projectFiles="true">
+          <logicalFolder name="f1" displayName="PIC32MZ" projectFiles="true">
+            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/portmacro.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
       </logicalFolder>
       <logicalFolder name="f3" displayName="Peripheral" projectFiles="true">
         <itemPath>source/hardwares/can1.h</itemPath>
@@ -60,10 +65,10 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="Tasks" projectFiles="true">
         <itemPath>source/task_main.h</itemPath>
-        <itemPath>source/task_statistic.h</itemPath>
         <itemPath>source/task_display.h</itemPath>
         <itemPath>source/task_test.h</itemPath>
         <itemPath>source/task_config.h</itemPath>
+        <itemPath>source/task_monitor.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="Utils" projectFiles="true">
         <itemPath>source/Utils/convert_to_string.h</itemPath>
@@ -89,7 +94,7 @@
           <itemPath>source/devices/ILI9341/ili9341_test.c</itemPath>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="f5" displayName="freeRTOS_kernel" projectFiles="true">
+      <logicalFolder name="f5" displayName="FreeRTOS" projectFiles="true">
         <logicalFolder name="f1" displayName="portable" projectFiles="true">
           <logicalFolder name="f2" displayName="MemMang" projectFiles="true">
             <itemPath>source/FreeRTOS-Kernel/portable/MemMang/heap_1.c</itemPath>
@@ -103,7 +108,6 @@
             <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/ISR_Support.h</itemPath>
             <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port.c</itemPath>
             <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/port_asm.S</itemPath>
-            <itemPath>source/FreeRTOS-Kernel/portable/PIC32MZ/portmacro.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <itemPath>source/FreeRTOS-Kernel/queue.c</itemPath>
@@ -129,9 +133,9 @@
       </logicalFolder>
       <logicalFolder name="f1" displayName="Tasks" projectFiles="true">
         <itemPath>source/task_main.c</itemPath>
-        <itemPath>source/task_statistic.c</itemPath>
         <itemPath>source/task_display.c</itemPath>
         <itemPath>source/task_test.c</itemPath>
+        <itemPath>source/task_monitor.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f4" displayName="Utils" projectFiles="true">
         <itemPath>source/Utils/convert_to_string.c</itemPath>
