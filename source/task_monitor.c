@@ -42,8 +42,6 @@ static void TMR3_EventHandler(uint32_t status, uintptr_t context)
     
     // 20 KHz - OK
     
-    //LATBbits.LATB10 ^= 1;
-    
     ulHighFrequencyTimerTicks++;
 }
 

@@ -3,16 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/configurations/FreeRTOSConfig.h</file>
             <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/main.c</file>
+            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/task_monitor.c</file>
             <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/task_main.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/hardwares/uart1.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/hardwares/dma.c</file>
             <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/hardwares/system.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/task_test.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/task_statistic.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/hardwares/uart1.h</file>
+            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/task_monitor.h</file>
             <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/FreeRTOS-Kernel/tasks.c</file>
-            <file>file:/D:/DEV/Microchip/Projects/mz2048ech064-freertos-v11.X/source/hardwares/dma.h</file>
         </group>
     </open-files>
 </project-private>

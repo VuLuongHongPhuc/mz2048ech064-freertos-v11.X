@@ -42,7 +42,6 @@
 | RX   | RG7  |
 
 ## UART1 configuration:
-- Can use: polling, interrupt or DMA
 | Name | Port | DMA channel |
 |------|------|-------------|
 | TX   | RB3  | DMA0        |

@@ -18,13 +18,18 @@
 
 /********************************* Private variable *******************************/
 
-static uint8_t _errorCode;
+static uint32_t _errorCode;
 
 /********************************* API functions **********************************/
 
-uint8_t STREAM_GetLastError(void)
+uint32_t STREAM_GetError(void)
 {
     return _errorCode;
+}
+
+void STREAM_ResetError(void)
+{
+    _errorCode = STREAM_NO_ERROR;
 }
 
 /**
@@ -34,7 +39,7 @@ uint8_t STREAM_GetLastError(void)
  * @param pBuffer - Pointer to buffer store the stream data
  * @param size - size of the buffer in bytes
  */
-void STREAM_Initialize(Stream_t * pStream, uint8_t * pBuffer, uint16_t size)
+void STREAM_Initialize(Stream_t * pStream, uint8_t * pBuffer, uint32_t size)
 {
     if(!pStream || !pBuffer)
     {
@@ -42,7 +47,7 @@ void STREAM_Initialize(Stream_t * pStream, uint8_t * pBuffer, uint16_t size)
         return;
     }
 
-    _errorCode = STREAM_NO_ERROR;
+    _errorCode = STREAM_NO_ERROR; /* Initialize at the same time the error value */
 
     /* Initialize the stream object */
     pStream->size = size;
@@ -56,7 +61,7 @@ void STREAM_Flush(Stream_t * pStream)
 {
     if(!pStream)
     {
-        _errorCode = STREAM_ERROR_NULL_POINTER;
+        _errorCode |= STREAM_ERROR_NULL_POINTER;
         return;
     }
 
@@ -68,7 +73,7 @@ bool STREAM_IsEmpty(Stream_t const * const pStream)
 {
     if(!pStream)
     {
-        _errorCode = STREAM_ERROR_NULL_POINTER;
+        _errorCode |= STREAM_ERROR_NULL_POINTER;
         return false;
     }
 
@@ -82,11 +87,11 @@ bool STREAM_IsEmpty(Stream_t const * const pStream)
     }
 }
 
-bool STREAM_Write(Stream_t * const pStream, const uint8_t* pBuf, uint16_t length)
+bool STREAM_Write(Stream_t * const pStream, const uint8_t* pBuf, uint32_t length)
 {
     if(!pStream || !pBuf)
     {
-        _errorCode = STREAM_ERROR_NULL_POINTER;
+        _errorCode |= STREAM_ERROR_NULL_POINTER;
         return false;
     }
 
@@ -116,22 +121,22 @@ bool STREAM_Write(Stream_t * const pStream, const uint8_t* pBuf, uint16_t length
                 pStream->read = pStream->buffer;
             }
 
-            _errorCode = STREAM_ERROR_OVERFLOW;
+            _errorCode |= STREAM_ERROR_OVERFLOW;
         }
     }
 
     return true;
 }
 
-uint16_t STREAM_Read(Stream_t * const pStream, uint8_t * pBuf, uint16_t length)
+uint32_t STREAM_Read(Stream_t * const pStream, uint8_t * pBuf, uint32_t length)
 {
     if(!pStream || !pBuf)
     {
-        _errorCode = STREAM_ERROR_NULL_POINTER;
+        _errorCode |= STREAM_ERROR_NULL_POINTER;
         return 0;
     }
 
-    uint16_t count = 0;
+    uint32_t count = 0;
     while ((length != 0) && (pStream->read != pStream->write))
     {
         /* Read current byte */
@@ -162,21 +167,21 @@ uint16_t STREAM_Read(Stream_t * const pStream, uint8_t * pBuf, uint16_t length)
  * @param[in]  length - length of the buffer to write read data to
  * @param[out] read   - Length of the data that was read
  */
-uint16_t STREAM_Look(Stream_t const * const pStream, uint16_t offset, uint8_t * const pBuf, uint16_t length)
+uint32_t STREAM_Look(Stream_t const * const pStream, uint32_t offset, uint8_t * const pBuf, uint32_t length)
 {
     if (!pStream || !pBuf)
     {
-        _errorCode = STREAM_ERROR_NULL_POINTER;
+        _errorCode |= STREAM_ERROR_NULL_POINTER;
         return 0;
     }
 
-    const uint16_t stream_data_size = STREAM_Length(pStream);
-    uint16_t absolute_offset;
-    uint16_t count = 0;
+    const uint32_t stream_data_size = STREAM_Length(pStream);
+    uint32_t absolute_offset;
+    uint32_t count = 0;
     while ((count < length) && (count < (stream_data_size - offset)))
     {
         /* Read byte */
-        absolute_offset = (uint16_t)(pStream->read - pStream->buffer + offset + count);
+        absolute_offset = (uint32_t)(pStream->read - pStream->buffer + offset + count);
         pBuf[count]   = pStream->buffer[absolute_offset % pStream->size];
         count++;
     }
@@ -186,16 +191,14 @@ uint16_t STREAM_Look(Stream_t const * const pStream, uint16_t offset, uint8_t * 
 
 /**
  * @brief Get the length of the data inside the stream buffer
- *
  * @param stream stream to read from
- *
  * @return the length of the data
  */
-uint16_t STREAM_Length(Stream_t const * const pStream)
+uint32_t STREAM_Length(Stream_t const * const pStream)
 {
     return pStream->write >= pStream->read
-             ? (uint16_t)(pStream->write - pStream->read)
-             : (uint16_t)(pStream->write + pStream->size - pStream->read);
+             ? (uint32_t)(pStream->write - pStream->read)
+             : (uint32_t)(pStream->write + pStream->size - pStream->read);
 }
 
 

@@ -64,11 +64,11 @@ void TestDmaUart(void)
     static uint8_t uart_tx_buf[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     
     UART1_WriteDma(uart_tx_buf, 9);
-#if 0
-    (void)DMA_CH0_UART1_TX_Transfer(uart_tx_buf, 7);
-#endif
 }
 
+#define MAX_U32_CHAR_LENGTH          9U
+#define PREFIX_RNG_INDEX_CHAR_SIZE   4U
+#define RNG_OUTPUT_CHAR_SIZE         (MAX_U32_CHAR_LENGTH + PREFIX_RNG_INDEX_CHAR_SIZE)
 void TestRng(void)
 {
     /*
@@ -82,15 +82,14 @@ void TestRng(void)
     
     
     /* output result on UART1 */
-    static char rng1_hex[9+4] = { '[', '1', ']', ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    static char rng1_hex[RNG_OUTPUT_CHAR_SIZE] = { '[', '1', ']', ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint32_to_hex(RNGNUMGEN1, &rng1_hex[4]);
-    rng1_hex[12] = '\n';
+    rng1_hex[RNG_OUTPUT_CHAR_SIZE-1] = '\n';
     UART1_WriteIT(rng1_hex, sizeof(rng1_hex));
 
-    static char rng2_hex[9+4] = { '[', '2', ']', ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    static char rng2_hex[RNG_OUTPUT_CHAR_SIZE] = { '[', '2', ']', ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     uint32_to_hex(RNGNUMGEN2, &rng2_hex[4]);
-    UART1_WriteIT(rng2_hex, sizeof(rng2_hex));
-     
+    UART1_WriteIT(rng2_hex, sizeof(rng2_hex));     
 }
 
 static void TestCan(void)
